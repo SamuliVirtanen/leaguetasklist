@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List - Dark Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .task-list {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+            user-select: none;
+            /* Prevent text selection */
+        }
+
+        .task-item input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            background-color: #333;
+        }
+
+        .task-item.completed {
+            background-color: #2a2a2a;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .controls button {
+            background-color: #ff5252;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .controls button:hover {
+            background-color: #ff3333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Task List - Dark Mode</h1>
+    <div class="task-list" id="taskList">
+        <!-- Tasks will be populated here -->
+    </div>
+    <div class="controls">
+        <button id="clearStorage">Clear Saved Tasks</button>
+    </div>
+
+    <script>
+        // Tasks array
+        const tasks = [
+            "Complete league tutorial",
+            "Open the league menu",
+            "Pickpocket man to level 5",
+            "Talk to Hans",
+            "Use the Northern Lumbridge castle staircase, then back down",
+            "Go down the ladder in the Cook's room",
+            "Defeat spider by kicking",
+            "Go back upstairs, Defeat rat outside of the castle",
+            "Turn on Thick skin prayer (you want 0 prayer points for later)",
+            "Run west from castle, chop 2 trees",
+            "Burn logs",
+            "Run to general store, sell bronze sword, dagger, shield, bow, net, body runes, buy knife",
+            "Go to bar to the east, buy 1 beer",
+            "Fletch logs into arrow shafts, drop shafts",
+            "Pick 3 onions at Fred's farm. Eat one",
+            "Run north of Fred's farm to chickens",
+            "Defeat chicken with fists and pick up egg (search coop if no spawns on ground)",
+            "Pick up bones and bury them",
+            "Run west to wheat field, use cry emote",
+            "Pick 1 wheat",
+            "Make flour in the windmill to the northeast",
+            "Run north to cows, milk dairy cow",
+            "Run west of wheat field, search haystack until you get a needle",
+            "Chop tree in potato field if available",
+            "Run to Aggie in Draynor village",
+            "Insult Aggie, pick up coins/flour/egg/milk",
+            "Complete 10 laps of Draynor rooftop course, stay until Mark of Grace",
+            "Start Vampire Slayer, get garlic upstairs",
+            "Deposit all items, withdraw coins, mind/air runes, and beer",
+            "Buy 25 wines, deposit 10",
+            "Buy 4 barley seeds",
+            "Home teleport",
+            "Pray at the altar in Lumbridge",
+            "Talk to Bob, ask him for a quest",
+            "Run to graveyard, use dance emote",
+            "Enter Death's lair, leave",
+            "Talk to Count Check, teleport to Stronghold",
+            "Complete Stronghold of Security",
+            "Defeat a goblin after first door",
+            "On Floor 3, eat if under 8 HP",
+            "On Floor 4, eat if under 9 HP",
+            "Drink beer in the long hall of Barbarian Village, drop beer glass",
+            "Buy steel full helm",
+            "Open league menu, teleport to Karamja",
+            "Pick pineapple near house portal",
+            "Run to charter ship, buy 1 banana and eat it",
+            "Take Hajedy's cart to Shilo Village",
+            "Deposit all, withdraw coins and tinderbox",
+            "Go to general store, buy torch, light it, and drop",
+            "Buy 35 bronze bars",
+            "Run across the bridge then northeast, go up ladder",
+            "Talk to Kaleb, ask if he has anything for sale, buy a night's rest",
+            "Run to bank, deposit all, withdraw harpoon",
+            "Trade Fernahei, buy 1 bait pack, 2 feather packs",
+            "Go up ladder, buy spiny helmet and enchanted gem from Duradel",
+            "Get slayer task from Duradel",
+            "Check slayer gem",
+            "Home teleport",
+            "Run south, buy steel axe from Bob",
+            "Fish shrimp to level 5 (catch 8 shrimp)",
+            "Bait fish to level 15",
+            "Bait fish until 25 Sardine task completes",
+            "Net fish 1 anchovy",
+            "Run north to river fishing spot (east across the bridge)",
+            "Bait fish until you catch 20 pike",
+            "Bank upstairs in Lumbridge castle",
+            "Deposit all, withdraw egg, milk, flour, all raw pike, bronze/steel axe, tinderbox",
+            "Turn in Cook's Assistant quest",
+            "Cook pike on range",
+            "Chop and burn logs to 15 firemaking, drop bronze axe after level 6",
+            "Keep 2 regular logs",
+            "Chop and burn 1 oak log",
+            "Run east, take canoe to Champion's Guild",
+            "Run east to Gertrude, buy cat",
+            "Stroke kitten, then shoo it away",
+            "Deposit tinderbox, withdraw pickaxe, 1 wine",
+            "Buy staff of air, equip it",
+            "Get a haircut in clothes shop",
+            "Buy hammer and 4 buckets in general store, fill 3 buckets with water",
+            "Deposit hammer and buckets",
+            "Run to Aubury, buy 2 mind packs, 1 earth pack, 1 water pack, 1 fire pack, and 15 chaos runes",
+            "Teleport to essence mine, mine 1 essence, leave",
+            "Go east to fancy clothes shop, buy blue wizard hat, pink skirt, and yellow cape",
+            "Equip pink skirt and yellow cape",
+            "Run southwest to Yarlo's house, use hat on hat stand",
+            "Pick up hat and equip it",
+            "Defeat mugger with air strike",
+            "Defeat imp with earth strike, scatter ashes",
+            "Pet stray dog if found",
+            "Insult the Tramp near rune shop in southeastern Varrock",
+            "Run east, steal from tea stall until 25 thieving, keep 1 cup of tea",
+            "Run to Varrock church, go upstairs, give Elsie a cup of tea for a story",
+            "Pickpocket warriors near the library until 40 thieving, save 45 coin pouches before opening",
+            "Pickpocket guard",
+            "Do museum quiz",
+            "Start Daddy's Home, continue quest",
+            "Remove all furniture in house",
+            "Search crate for waxwood logs",
+            "Run to sawmill, cut 10 trees on the way",
+            "Make 10 planks, buy 5 bolts of cloth, saw, and 50 steel nails",
+            "Build everything in Yarlo's house, complete Daddy's Home",
+            "Open crate, bank all, withdraw pickaxe, steel axe, barley seeds, coins, mind, water, fire runes, 7 wines, 1 teleport tab",
+            "Buy iron dagger, equip and drop it",
+            "Continue Vampire Slayer until you get the stake",
+            "Pick up cabbage near southern Varrock exit",
+            "Defeat a guard",
+            "Mine 3 clay southwest of Varrock",
+            "Defeat a dark wizard",
+            "Run around dark wizards, pick 3 redberries",
+            "Mine 5 tin and 1 copper, drop 4 tin",
+            "Run to hops patch, buy rake, seed dibber, and 4 compost",
+            "Use 1 compost on hops patch, then rake and plant barley",
+            "Deposit tools in tool leprechaun",
+            "Go to bank, deposit all, withdraw coins, mind, chaos, water, fire runes, and 3 food",
+            "Teleport to house",
+            "Build any room",
+            "Leave POH",
+            "Run northwest to rope swing, defeat moss giant with fire strike",
+            "Claim first combat mastery reward",
+            "Run to charter ship, buy 10 bananas",
+            "Run to Brimhaven agility course, tag flashing pillar once",
+            "Go to Karamja volcano, defeat a lesser demon with water bolt",
+            "Enter TzHaar city, defeat TzHaar-Ket or TzHaar-Xil",
+            "Put 10 bananas in the crate",
+            "Home teleport",
+            "Withdraw steel/spiny helm, equip it",
+            "Bank all, withdraw coins, tin ore, copper ore, mind and fire runes",
+            "Buy shears from general store",
+            "Smelt bronze bar, drop bar",
+            "Defeat a ram, shear 24 sheep, drop shears",
+            "Defeat a duck with fire spell",
+            "Defeat cow calf, pick up raw beef",
+            "Cook and burn raw beef",
+            "Spin balls of wool",
+            "Finish Sheep Shearer quest",
+            "Pickpocket HAM members until steel pickaxe and grimy guam",
+            "Teleport to Lumbridge",
+            "Mine anything south of shrimp spot",
+            "Defeat frog",
+            "Enter Zanaris with Dramen staff",
+            "Leave Zanaris",
+            "Buy candle from candle seller",
+            "Withdraw 4 balls of wool, 2 onions, 3 redberries, unnoted guam",
+            "Pickpocket master farmer, skip Ranarr seed task",
+            "Have Ned make rope, buy extra rope",
+            "Use redberries and onions on Aggie, dye cape orange",
+            "Unlock Clue Compass relic",
+            "Clue compass to Varrock castle. Go upstairs to the roof, southwest corner. Thieve guards to 50 (unless you did earlier)",
+            "Clue compass to Shilo bank. Withdraw harpoon, clue compass, 10 feathers, air staff, mind runes, hammer, garlic, stake, coins, steel axe, dramen staff, 10 wines",
+            "Fish in Shilo until raw salmon",
+            "Clue compass to Tai Bwo Wannai",
+            "Run south and fish 1 karambwanji",
+            "Run east and defeat a snake",
+            "Clue compass to Barbarian Village. Defeat a barbarian",
+            "Clue compass to Digsite examiners center: Talk to examiner for a trowel, search cupboard on south wall for specimen jar",
+            "Clue compass to Digsite (north of exam center): Pickpocket Digsite workman for specimen brush",
+            "Dig with trowel in the furthest north soil patch for a Belt buckle (1/20)",
+            "Clue compass to Digsite examiners center: Use belt buckle on Terry Balando",
+            "Clue compass to Draynor village fountain: Defeat Count Draynor",
+            "Clue compass to Varrock clothes shop: Run south to sword shop, buy mithril dagger and adamant dagger, equip both",
+            "League menu teleport to Karamja",
+            "Run southwest to Brimhaven dungeon",
+            "Enter, run to the greater demons. Defeat 1 (safespot near stairs or on east wall)",
+            "Clue compass to enchanted valley (BKQ), kill 6 rabbits",
+            "Clue compass to Shilo bank. Deposit all. Withdraw hammer, clue compass, bronze bars",
+            "Clue compass to Varrock clothes shop. Smith bronze knives until 16. Make 1 helmet, 1 skirt",
+            "Clue compass to Varrock clothes shop. Buy rune mace in Champions Guild. Can thieve guards if you can't afford",
+            "Clue compass to Lumbridge wheat field. Kill 3 chickens in 6 seconds with rune mace on strength",
+            "Clue compass to Shilo Village",
+            "Withdraw chaos runes, water runes, air staff, 10 wines, clue compass, dramen staff",
+            "Home teleport, claim anti-dragon shield from Duke",
+            "Clue compass to enchanted valley",
+            "Fairy ring to BJP. Run to dungeon on eastern side",
+            "Kill 10 blue dragons, bury bones for 23 prayer",
+            "Claim your second combat mastery. Put it wherever you want based on your playstyle. Prioritize going 6 in one style before switching",
+            "If you want 43 prayer: Find a partner to do Shield of Arrav with",
+            "After Shield of Arrav, talk to Historian Minas upstairs in Varrock museum. Offer information for a 1k and 5k exp lamp. Use on prayer. Turn on Improved Reflexes + Superhuman Strength. Protect from Melee",
+            "Clean finds until 51+ kudos. Speak with information clerk to the northwest for 8k mining experience",
+            "Clue compass to north side of Digsite",
+            "Take boat to Fossil Island, mine 50 iron to the east. Bank 40 iron ore and 2 coal. Keep at least 6 in inventory",
+            "Home teleport or Lumbridge teleport on league menu. Smelt 2 iron bars at furnace",
+            "Clue compass to Varrock rune shop (Aubury)",
+            "Teleport to essence mine, mine 25 pure essence",
+            "Clue compass to Shilo bank",
+            "Withdraw 2 oak planks, 1 iron bar, 5 nails, hammer",
+            "Digsite (north of exam center): Take boat to Fossil Island",
+            "Pet dog in museum camp tent",
+            "Build a bank",
+            "Continue to build the rest of the camp",
+            "Claim 5 small fossils from dude near the shore",
+            "Deposit small fossils, withdraw rake, axe, 10 food",
+            "Unlock mushroom transportation system",
+            "Clue compass to BKQ. Kill tree spirits until at least mithril axe",
+            "Clue teleport to Draynor",
+            "Claim forestry backpack",
+            "Cut around this area with others for forestry events",
+            "Regular trees until 1000 arrow shafts, bank 15 regular logs",
+            "Oaks until you fletch 1 shortbow, 25 stocks, 30 firemaking. Bank at least 40 oak logs",
+            "Willows until you fletch 1 shortbow, burn 100 logs",
+            "Withdraw clue compass, coins, regular logs/oak logs. Make 15 planks and oak planks with clue compass to Sawmill. Buy 300 nails",
+            "Clue compass to Shilo",
+            "Withdraw hammer, saw, nails, regular planks. Teleport to all clue compass locations to make stash units for construction experience",
+            "Beginner stash building for construction experience: Hammer, saw, nails, regular planks - 6 planks, 30 nails",
+            "Easy stash building for construction experience: Hammer, saw, nails, regular planks - 26 planks, 130 nails",
+            "Clue compass teleport to Varrock clothing shop. Buy brown apron, leather boots, leather gloves",
+            "Medium stash building for construction experience: Hammer, saw, nails, oak planks - 14 oak planks, 70 nails",
+            "Fill Edgeville stash with boots/gloves/apron",
+            "Teleport to Varrock clothing shop",
+            "Complete 1 novice mahogany home contract",
+            "Withdraw 8 oak planks",
+            "Use house teleport tab, build kitchen. Build oak larder",
+            "Teleport to Varrock clothing shop. Complete 10 laps of rooftop course",
+            "Withdraw clue compass, dramen staff",
+            "Clue compass to BKQ",
+            "Fairy ring to Zanaris, take crop circle to Puro-Puro",
+            "Catch 50 baby, young, or gourmet implings. Catch at least 1 baby imp",
+            "Clue compass to Shilo, withdraw coins. Buy 110 bronze bars",
+            "Withdraw coins, iron ore, clue compass",
+            "Smelt 15+ iron bars, 1 steel bar",
+            "Buy 2 feather packs",
+            "Make 150 headless arrows",
+            "Clue compass to Varrock clothes shop",
+            "Smith 150 iron arrowheads",
+            "Make 150 iron arrows",
+            "Smith 10 steel bolts",
+            "Clue compass to Shilo, withdraw harpoon, feathers",
+            "Fish 50 salmon",
+            "Clue compass to Karamja banana plantation",
+            "Fish 100 lobsters",
+            "Fish 50 swordfish",
+            "Home teleport",
+            "Cook all raw lobsters in bank",
+            "Kill goblins for chef's hat",
+            "Enter cooking guild",
+            "Withdraw coins, league teleport to Karamja",
+            "Brimhaven agility arena until 10 loot tickets (3 pillars)",
+            "Purchase a grimy snapdragon upstairs",
+            "Complete your slayer task with mage"
+        ];
+
+        // Populate tasks
+        const taskList = document.getElementById("taskList");
+        const localStorageKey = 'taskStatuses';
+
+        // Load saved statuses from localStorage
+        function loadTaskStatuses() {
+            const savedStatuses = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+            return savedStatuses;
+        }
+
+        // Save statuses to localStorage
+        function saveTaskStatuses(statuses) {
+            localStorage.setItem(localStorageKey, JSON.stringify(statuses));
+        }
+
+        // Initialize tasks with saved statuses
+        const savedStatuses = loadTaskStatuses();
+        tasks.forEach((task, index) => {
+            const taskItem = document.createElement("label");
+            taskItem.classList.add("task-item");
+            taskItem.htmlFor = `task-${index}`;
+            taskItem.innerHTML = `
+                <input type="checkbox" id="task-${index}" ${savedStatuses[index] ? 'checked' : ''}>
+                <span>${index + 1}. ${task}</span>
+            `;
+            if (savedStatuses[index]) {
+                taskItem.classList.add("completed");
+            }
+            taskList.appendChild(taskItem);
+        });
+
+        // Add event listener for checkbox toggle
+        taskList.addEventListener("change", (e) => {
+            if (e.target.tagName === "INPUT" && e.target.type === "checkbox") {
+                const taskItem = e.target.parentElement;
+                const taskIndex = Array.from(taskList.children).indexOf(taskItem);
+
+                // Toggle completed class
+                taskItem.classList.toggle("completed", e.target.checked);
+
+                // Update localStorage
+                savedStatuses[taskIndex] = e.target.checked;
+                saveTaskStatuses(savedStatuses);
+            }
+        });
+
+        // Clear localStorage button functionality
+        const clearStorageButton = document.getElementById("clearStorage");
+        clearStorageButton.addEventListener("click", () => {
+            localStorage.removeItem(localStorageKey);
+            savedStatuses.fill(false); // Reset statuses in memory
+            document.querySelectorAll(".task-item input").forEach(input => {
+                input.checked = false;
+                input.parentElement.classList.remove("completed");
+            });
+        });
+    </script>
+</body>
+
+</html>
